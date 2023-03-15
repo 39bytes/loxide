@@ -177,7 +177,7 @@ impl Scanner {
 
         let value = self
             .source
-            .get(self.start + 1..self.current)
+            .get(self.start + 1..self.current - 1)
             .unwrap()
             .to_string();
 
