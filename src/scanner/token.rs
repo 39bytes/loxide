@@ -1,10 +1,10 @@
 use std::fmt::Display;
 
 pub struct Token {
-    token_type: TokenType,
-    lexeme: String,
-    literal: Box<dyn Display>,
-    line: usize,
+    pub token_type: TokenType,
+    pub lexeme: String,
+    pub literal: Box<dyn Display>,
+    pub line: usize,
 }
 
 impl Token {
