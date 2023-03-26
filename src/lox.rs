@@ -2,6 +2,7 @@ use std::fs::read_to_string;
 use std::io;
 use std::io::Write;
 
+use crate::parser::Parser;
 use crate::scanner::Scanner;
 
 pub fn run_file(path: &str) -> io::Result<()> {
@@ -36,8 +37,12 @@ pub fn run_prompt() -> io::Result<()> {
 
 pub fn run(source: String) {
     let mut sc = Scanner::new(source);
-    for token in sc.scan_tokens() {
-        println!("{}", token);
+    let tokens = sc.scan_tokens();
+    let mut parser = Parser::new(tokens.clone());
+
+    match parser.parse() {
+        Some(expr) => println!("{}", expr),
+        None => println!("Parse error"),
     }
 }
 
