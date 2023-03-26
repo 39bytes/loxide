@@ -1,9 +1,9 @@
 use phf::phf_map;
-use std::{fmt::Display, iter::Peekable, str::Chars};
+use std::{fmt::Display, iter::Peekable, rc::Rc, str::Chars};
 
-pub mod token;
+mod token;
 
-use self::token::{Token, TokenType};
+pub use self::token::{Token, TokenType};
 use crate::lox;
 
 static KEYWORDS: phf::Map<&'static str, TokenType> = phf_map! {
@@ -54,12 +54,8 @@ impl Scanner {
             self.scan_token();
         }
 
-        self.tokens.push(Token::new(
-            TokenType::Eof,
-            String::new(),
-            Box::new(""),
-            self.line,
-        ));
+        self.tokens
+            .push(Token::new(TokenType::Eof, String::new(), None, self.line));
 
         &self.tokens
     }
@@ -185,7 +181,7 @@ impl Scanner {
             .unwrap()
             .to_string();
 
-        self.add_token(TokenType::String, Box::new(value));
+        self.add_token(TokenType::String, Some(Rc::new(value)));
     }
 
     fn parse_number(&mut self) {
@@ -204,7 +200,7 @@ impl Scanner {
         }
 
         let s = self.source.get(self.start..self.current).unwrap();
-        self.add_token(TokenType::Number, Box::new(s.parse::<f64>().unwrap()))
+        self.add_token(TokenType::Number, Some(Rc::new(s.parse::<f64>().unwrap())))
     }
 
     fn parse_identifier(&mut self) {
@@ -220,10 +216,10 @@ impl Scanner {
     }
 
     fn add_empty_token(&mut self, token_type: TokenType) {
-        self.add_token(token_type, Box::new(""));
+        self.add_token(token_type, None);
     }
 
-    fn add_token(&mut self, token_type: TokenType, literal: Box<dyn Display>) {
+    fn add_token(&mut self, token_type: TokenType, literal: Option<Rc<dyn Display>>) {
         let text = self
             .source
             .get(self.start..self.current)

@@ -1,6 +1,6 @@
-use std::fmt::Display;
+use std::{fmt::Display, rc::Rc};
 
-use crate::scanner::token::Token;
+use crate::scanner::Token;
 
 macro_rules! parenthesize {
     ( $name:expr, $($e:expr), *) => {{
@@ -25,7 +25,7 @@ pub enum Expr {
         expression: Box<Expr>,
     },
     Literal {
-        value: Box<dyn Display>,
+        value: Option<Rc<dyn Display>>,
     },
     Unary {
         operator: Token,
@@ -42,11 +42,12 @@ impl Display for Expr {
                 right,
             } => parenthesize!(operator.lexeme, left, right),
             Expr::Grouping { expression } => parenthesize!("group", expression),
-            Expr::Literal { value } => value.to_string(),
+            Expr::Literal { value } => match value {
+                Some(v) => v.to_string(),
+                None => String::from("null"),
+            },
             Expr::Unary { operator, right } => parenthesize!(operator.lexeme, right),
         };
         write!(f, "{text}")
     }
 }
-
-impl Expr {}

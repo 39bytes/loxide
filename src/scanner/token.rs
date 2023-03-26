@@ -1,9 +1,10 @@
-use std::fmt::Display;
+use std::{fmt::Display, iter::Peekable, rc::Rc};
 
+#[derive(Clone)]
 pub struct Token {
     pub token_type: TokenType,
     pub lexeme: String,
-    pub literal: Box<dyn Display>,
+    pub literal: Option<Rc<dyn Display>>,
     pub line: usize,
 }
 
@@ -11,7 +12,7 @@ impl Token {
     pub fn new(
         token_type: TokenType,
         lexeme: String,
-        literal: Box<dyn Display>,
+        literal: Option<Rc<dyn Display>>,
         line: usize,
     ) -> Token {
         Token {
@@ -25,7 +26,11 @@ impl Token {
 
 impl Display for Token {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{} {} {}", self.token_type, self.lexeme, self.literal)
+        if let Some(s) = &self.literal {
+            write!(f, "{} {} {}", self.token_type, self.lexeme, s)
+        } else {
+            write!(f, "{} {} ", self.token_type, self.lexeme)
+        }
     }
 }
 
