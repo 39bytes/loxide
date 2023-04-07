@@ -140,6 +140,28 @@ impl Parser {
         }
     }
 
+    fn synchronize(&mut self) {
+        self.advance();
+
+        while !self.is_at_end() {
+            if let TokenType::Semicolon = self.previous().token_type {
+                return;
+            }
+
+            match self.peek().unwrap().token_type {
+                TokenType::Class
+                | TokenType::Fun
+                | TokenType::Var
+                | TokenType::For
+                | TokenType::If
+                | TokenType::While
+                | TokenType::Print
+                | TokenType::Return => return,
+                _ => self.advance(),
+            };
+        }
+    }
+
     fn is_match(&mut self, types: &[TokenType]) -> bool {
         for token_type in types {
             if self.check(*token_type) {
@@ -175,7 +197,7 @@ impl Parser {
         self.tokens.get(self.current)
     }
 
-    fn previous(&mut self) -> &Token {
+    fn previous(&self) -> &Token {
         self.tokens.get(self.current - 1).unwrap()
     }
 }
