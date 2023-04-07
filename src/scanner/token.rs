@@ -1,6 +1,6 @@
-use std::any::Any;
 use std::fmt::Debug;
-use std::{fmt::Display, iter::Peekable, rc::Rc};
+use std::mem::discriminant;
+use std::{fmt::Display, rc::Rc};
 
 #[derive(Clone)]
 pub struct Token {
@@ -26,7 +26,7 @@ impl Token {
     }
 }
 
-impl Display for Token {
+impl Debug for Token {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         if let Some(s) = &self.literal {
             write!(f, "{} {} {}", self.token_type, self.lexeme, s)
@@ -36,7 +36,14 @@ impl Display for Token {
     }
 }
 
-#[derive(Clone, Copy, strum_macros::Display)]
+impl PartialEq for Token {
+    fn eq(&self, other: &Self) -> bool {
+        discriminant(&self.token_type) == discriminant(&other.token_type)
+            && self.lexeme == other.lexeme
+    }
+}
+
+#[derive(Clone, Copy, Debug, strum_macros::Display)]
 pub enum TokenType {
     // Single-character tokens.
     LeftParen,
