@@ -77,23 +77,23 @@ impl Scanner {
     fn scan_token(&mut self) -> Result<Option<Token>, ScanError> {
         if let Some(c) = self.advance() {
             match c {
-                '(' => Ok(Some(self.make_empty_token(TokenType::LeftParen))),
-                ')' => Ok(Some(self.make_empty_token(TokenType::RightParen))),
-                '{' => Ok(Some(self.make_empty_token(TokenType::LeftBrace))),
-                '}' => Ok(Some(self.make_empty_token(TokenType::RightBrace))),
-                ',' => Ok(Some(self.make_empty_token(TokenType::Comma))),
-                '.' => Ok(Some(self.make_empty_token(TokenType::Dot))),
-                '-' => Ok(Some(self.make_empty_token(TokenType::Minus))),
-                '+' => Ok(Some(self.make_empty_token(TokenType::Plus))),
-                ';' => Ok(Some(self.make_empty_token(TokenType::Semicolon))),
-                '*' => Ok(Some(self.make_empty_token(TokenType::Star))),
+                '(' => Ok(Some(self.empty_token(TokenType::LeftParen))),
+                ')' => Ok(Some(self.empty_token(TokenType::RightParen))),
+                '{' => Ok(Some(self.empty_token(TokenType::LeftBrace))),
+                '}' => Ok(Some(self.empty_token(TokenType::RightBrace))),
+                ',' => Ok(Some(self.empty_token(TokenType::Comma))),
+                '.' => Ok(Some(self.empty_token(TokenType::Dot))),
+                '-' => Ok(Some(self.empty_token(TokenType::Minus))),
+                '+' => Ok(Some(self.empty_token(TokenType::Plus))),
+                ';' => Ok(Some(self.empty_token(TokenType::Semicolon))),
+                '*' => Ok(Some(self.empty_token(TokenType::Star))),
                 '!' => {
                     let token = if self.is_match('=') {
                         TokenType::BangEqual
                     } else {
                         TokenType::Bang
                     };
-                    Ok(Some(self.make_empty_token(token)))
+                    Ok(Some(self.empty_token(token)))
                 }
                 '=' => {
                     let token = if self.is_match('=') {
@@ -101,7 +101,7 @@ impl Scanner {
                     } else {
                         TokenType::Equal
                     };
-                    Ok(Some(self.make_empty_token(token)))
+                    Ok(Some(self.empty_token(token)))
                 }
                 '<' => {
                     let token = if self.is_match('=') {
@@ -109,7 +109,7 @@ impl Scanner {
                     } else {
                         TokenType::Less
                     };
-                    Ok(Some(self.make_empty_token(token)))
+                    Ok(Some(self.empty_token(token)))
                 }
                 '>' => {
                     let token = if self.is_match('=') {
@@ -117,7 +117,7 @@ impl Scanner {
                     } else {
                         TokenType::Greater
                     };
-                    Ok(Some(self.make_empty_token(token)))
+                    Ok(Some(self.empty_token(token)))
                 }
                 '/' => {
                     if self.is_match('/') {
@@ -126,7 +126,7 @@ impl Scanner {
                         }
                         Ok(None)
                     } else {
-                        Ok(Some(self.make_empty_token(TokenType::Slash)))
+                        Ok(Some(self.empty_token(TokenType::Slash)))
                     }
                 }
                 ' ' | '\r' | '\t' => Ok(None),
@@ -194,7 +194,7 @@ impl Scanner {
         self.advance();
 
         if let Some(value) = self.source.get(self.start + 1..self.current - 1) {
-            Ok(self.make_token(TokenType::String, Some(Rc::new(value.to_string()))))
+            Ok(self.token(TokenType::String, Some(Rc::new(value.to_string()))))
         } else {
             Err(ScanError {
                 message: "Unterminated string.".to_string(),
@@ -218,7 +218,7 @@ impl Scanner {
         }
 
         let s = self.source.get(self.start..self.current).unwrap();
-        self.make_token(TokenType::Number, Some(Rc::new(s.parse::<f64>().unwrap())))
+        self.token(TokenType::Number, Some(Rc::new(s.parse::<f64>().unwrap())))
     }
 
     fn parse_identifier(&mut self) -> Token {
@@ -232,14 +232,14 @@ impl Scanner {
             None => &TokenType::Identifier,
         };
 
-        self.make_empty_token(*token_type)
+        self.empty_token(*token_type)
     }
 
-    fn make_empty_token(&mut self, token_type: TokenType) -> Token {
-        self.make_token(token_type, None)
+    fn empty_token(&mut self, token_type: TokenType) -> Token {
+        self.token(token_type, None)
     }
 
-    fn make_token(&mut self, token_type: TokenType, literal: Option<Rc<dyn Display>>) -> Token {
+    fn token(&mut self, token_type: TokenType, literal: Option<Rc<dyn Display>>) -> Token {
         let text = self
             .source
             .get(self.start..self.current)
