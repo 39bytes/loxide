@@ -40,9 +40,8 @@ pub fn run(source: String) {
     let tokens = sc.scan_tokens();
     let mut parser = Parser::new(tokens.clone());
 
-    match parser.parse() {
-        Some(expr) => println!("{}", expr),
-        None => println!("Parse error"),
+    if let Some(expr) = parser.parse() {
+        println!("{}", expr);
     }
 }
 

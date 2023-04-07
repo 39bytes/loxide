@@ -5,9 +5,6 @@ use std::env;
 use std::process::exit;
 use std::rc::Rc;
 
-use parser::Parser;
-use scanner::Scanner;
-
 mod lox;
 mod parser;
 mod scanner;
