@@ -2,14 +2,11 @@ use crate::{
     lox,
     scanner::{Token, TokenType},
 };
-use std::{
-    fmt::{Display, Error},
-    mem::discriminant,
-    rc::Rc,
-};
+use std::{fmt::Display, mem::discriminant, rc::Rc};
 
 mod expr;
 pub use expr::Expr;
+pub use expr::RuntimeError;
 
 pub struct Parser {
     tokens: Vec<Token>,

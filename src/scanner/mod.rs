@@ -1,5 +1,5 @@
 use phf::phf_map;
-use std::{fmt::Display, rc::Rc};
+use std::{any::Any, fmt::Display, rc::Rc};
 
 mod token;
 
@@ -239,7 +239,7 @@ impl Scanner {
         self.token(token_type, None)
     }
 
-    fn token(&mut self, token_type: TokenType, literal: Option<Rc<dyn Display>>) -> Token {
+    fn token(&mut self, token_type: TokenType, literal: Option<Rc<dyn Any>>) -> Token {
         let text = self
             .source
             .get(self.start..self.current)

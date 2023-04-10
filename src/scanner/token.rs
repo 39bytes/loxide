@@ -1,12 +1,13 @@
+use std::any::Any;
 use std::fmt::Debug;
 use std::mem::discriminant;
-use std::{fmt::Display, rc::Rc};
+use std::rc::Rc;
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Token {
     pub token_type: TokenType,
     pub lexeme: String,
-    pub literal: Option<Rc<dyn Display>>,
+    pub literal: Option<Rc<dyn Any>>,
     pub line: usize,
 }
 
@@ -14,7 +15,7 @@ impl Token {
     pub fn new(
         token_type: TokenType,
         lexeme: String,
-        literal: Option<Rc<dyn Display>>,
+        literal: Option<Rc<dyn Any>>,
         line: usize,
     ) -> Token {
         Token {
@@ -26,15 +27,15 @@ impl Token {
     }
 }
 
-impl Debug for Token {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        if let Some(s) = &self.literal {
-            write!(f, "{} {} {}", self.token_type, self.lexeme, s)
-        } else {
-            write!(f, "{} {} ", self.token_type, self.lexeme)
-        }
-    }
-}
+// impl Debug for Token {
+//     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+//         if let Some(s) = &self.literal {
+//             write!(f, "{} {} {}", self.token_type, self.lexeme, s)
+//         } else {
+//             write!(f, "{} {} ", self.token_type, self.lexeme)
+//         }
+//     }
+// }
 
 impl PartialEq for Token {
     fn eq(&self, other: &Self) -> bool {

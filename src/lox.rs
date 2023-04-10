@@ -2,7 +2,8 @@ use std::fs::read_to_string;
 use std::io;
 use std::io::Write;
 
-use crate::parser::Parser;
+use crate::interpreter;
+use crate::parser::{Expr, Parser};
 use crate::scanner::Scanner;
 
 pub fn run_file(path: &str) -> io::Result<()> {
@@ -41,7 +42,10 @@ pub fn run(source: String) {
     let mut parser = Parser::new(tokens.clone());
 
     if let Some(expr) = parser.parse() {
-        println!("{}", expr);
+        match interpreter::interpret(expr) {
+            Ok(_) => (),
+            Err(e) => eprintln!("{}", e),
+        };
     }
 }
 
