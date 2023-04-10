@@ -1,4 +1,4 @@
-use std::{any::Any, fmt::Display, rc::Rc};
+use std::{any::Any, rc::Rc};
 
 use crate::parser::{Expr, RuntimeError};
 

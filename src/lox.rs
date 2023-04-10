@@ -3,7 +3,7 @@ use std::io;
 use std::io::Write;
 
 use crate::interpreter;
-use crate::parser::{Expr, Parser};
+use crate::parser::Parser;
 use crate::scanner::Scanner;
 
 pub fn run_file(path: &str) -> io::Result<()> {

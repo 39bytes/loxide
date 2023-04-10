@@ -190,16 +190,17 @@ impl Scanner {
             self.advance();
         }
 
+        if self.is_at_end() {
+            return Err(ScanError {
+                message: "Unterminated string.".to_string(),
+            });
+        }
+
         // Consume closing '"'
         self.advance();
 
-        if let Some(value) = self.source.get(self.start + 1..self.current - 1) {
-            Ok(self.token(TokenType::String, Some(Rc::new(value.to_string()))))
-        } else {
-            Err(ScanError {
-                message: "Unterminated string.".to_string(),
-            })
-        }
+        let value = &self.source[self.start + 1..self.current - 1];
+        Ok(self.token(TokenType::String, Some(Rc::new(value.to_string()))))
     }
 
     fn parse_number(&mut self) -> Token {
