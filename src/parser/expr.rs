@@ -185,11 +185,7 @@ pub struct RuntimeError {
 
 impl Display for RuntimeError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(
-            f,
-            "Runtime Error: line {} at '{}', {}",
-            self.token.token_type, self.token.lexeme, self.message
-        )
+        write!(f, "{} \n[line {}]", self.message, self.token.line)
     }
 }
 
